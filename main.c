@@ -55,6 +55,10 @@
 
 /* Function prototypes */
 void RC522_Init(void);
+uint8_t RC522_ReadReg(uint8_t addr);
+void RC522_WriteReg(uint8_t addr, uint8_t val);
+void RC522_SetBitMask(uint8_t reg, uint8_t mask);
+void RC522_SetBitMask(uint8_t reg, uint8_t mask);
 uint8_t RC522_Request(uint8_t reqMode, uint8_t *TagType);
 uint8_t RC522_Anticoll(uint8_t *serNum);
 uint8_t RC522_SelectTag(uint8_t *serNum);
@@ -71,8 +75,8 @@ void RC522_WriteFIFO(uint8_t *data, uint8_t length);
 void RC522_ReadFIFO(uint8_t *data, uint8_t length);
 
 /* CS helpers */
-static inline void RC522_CS_Select(void)  { RC522_CS_GPIO_PORT->BSRR = (1U << (RC522_CS_PIN + 16)); } /* low */
-static inline void RC522_CS_Unselect(void){ RC522_CS_GPIO_PORT->BSRR = (1U << RC522_CS_PIN); }         /* high */
+void RC522_CS_Select(void)  { RC522_CS_GPIO_PORT->BSRR = (1U << (RC522_CS_PIN + 16)); } /* low */
+void RC522_CS_Unselect(void){ RC522_CS_GPIO_PORT->BSRR = (1U << RC522_CS_PIN); }         /* high */
 
 /* Configure SPI pins (AF5) and CS/RST GPIOs. */
 void RC522_GPIO_Init(void) {
@@ -140,7 +144,7 @@ void RC522_Init(void) {
 }
 
 /* Low-level SPI byte transfer (single definition) */
-static uint8_t SPI1_TransferByte(uint8_t tx) {
+uint8_t SPI1_TransferByte(uint8_t tx) {
     while (!(SPI1->SR & SPI_SR_TXE));
     *((__IO uint8_t *)&SPI1->DR) = tx;
     while (!(SPI1->SR & SPI_SR_RXNE));
@@ -148,7 +152,7 @@ static uint8_t SPI1_TransferByte(uint8_t tx) {
 }
 
 /* Register access */
-static uint8_t RC522_ReadReg(uint8_t addr) {
+uint8_t RC522_ReadReg(uint8_t addr) {
     uint8_t val;
     RC522_CS_Select();
     SPI1_TransferByte((addr << 1) | 0x80);
@@ -157,19 +161,19 @@ static uint8_t RC522_ReadReg(uint8_t addr) {
     return val;
 }
 
-static void RC522_WriteReg(uint8_t addr, uint8_t val) {
+void RC522_WriteReg(uint8_t addr, uint8_t val) {
     RC522_CS_Select();
     SPI1_TransferByte((addr << 1) & 0x7E);
     SPI1_TransferByte(val);
     RC522_CS_Unselect();
 }
 
-static void RC522_SetBitMask(uint8_t reg, uint8_t mask) {
+void RC522_SetBitMask(uint8_t reg, uint8_t mask) {
     uint8_t tmp = RC522_ReadReg(reg);
     RC522_WriteReg(reg, tmp | mask);
 }
 
-static void RC522_ClearBitMask(uint8_t reg, uint8_t mask) {
+void RC522_ClearBitMask(uint8_t reg, uint8_t mask) {
     uint8_t tmp = RC522_ReadReg(reg);
     RC522_WriteReg(reg, tmp & (~mask));
 }
