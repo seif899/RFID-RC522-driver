@@ -1,7 +1,6 @@
 sources:
-https://lastminuteengineers.com/how-rfid-works-rc522-arduino-tutorial/?utm_source=chatgpt.com /
-https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf?utm_source=chatgpt.com
-
+https://lastminuteengineers.com/how-rfid-works-rc522-arduino-tutorial /
+https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf
 wiring:
 
 RC522 VCC → 3.3 V
