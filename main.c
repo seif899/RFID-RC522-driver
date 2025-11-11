@@ -75,38 +75,39 @@ void RC522_WriteFIFO(uint8_t *data, uint8_t length);
 void RC522_ReadFIFO(uint8_t *data, uint8_t length);
 
 /* CS helpers */
-void RC522_CS_Select(void)  { RC522_CS_GPIO_PORT->BSRR = (1U << (RC522_CS_PIN + 16)); } /* low */
-void RC522_CS_Unselect(void){ RC522_CS_GPIO_PORT->BSRR = (1U << RC522_CS_PIN); }         /* high */
+void RC522_CS_Select(void)  { RC522_CS_GPIO_PORT->BSRR = (1 << (RC522_CS_PIN + 16)); } /* low */
+void RC522_CS_Unselect(void){ RC522_CS_GPIO_PORT->BSRR = (1 << RC522_CS_PIN); }         /* high */
 
 /* Configure SPI pins (AF5) and CS/RST GPIOs. */
 void RC522_GPIO_Init(void) {
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN;
 
     /* PA5/PA6/PA7 -> AF5 (SPI1) */
-    GPIOA->MODER &= ~((3U << (5*2)) | (3U << (6*2)) | (3U << (7*2)));
-    GPIOA->MODER |=  ((2U << (5*2)) | (2U << (6*2)) | (2U << (7*2)));
-    GPIOA->AFR[0] &= ~((0xFU << (5*4)) | (0xFU << (6*4)) | (0xFU << (7*4)));
-    GPIOA->AFR[0] |=  ((5U << (5*4)) | (5U << (6*4)) | (5U << (7*4)));
-    GPIOA->OSPEEDR |= ((3U << (5*2)) | (3U << (6*2)) | (3U << (7*2)));
-    GPIOA->PUPDR &= ~((3U << (5*2)) | (3U << (6*2)) | (3U << (7*2)));
-    GPIOA->OTYPER &= ~((1U << 5) | (1U << 7));
+    GPIOA->MODER &= ~((3 << (5*2)) | (3 << (6*2)) | (3 << (7*2)));
+    GPIOA->MODER |=  ((2 << (5*2)) | (2 << (6*2)) | (2 << (7*2)));
+    GPIOA->AFR[0] &= ~((0xF << (5*4)) | (0xF << (6*4)) | (0xF << (7*4)));
+    GPIOA->AFR[0] |=  ((5 << (5*4)) | (5 << (6*4)) | (5 << (7*4)));
+    GPIOA->OSPEEDR |= ((3 << (5*2)) | (3 << (6*2)) | (3 << (7*2)));
+    GPIOA->PUPDR &= ~((3 << (5*2)) | (3 << (6*2)) | (3 << (7*2)));
+    GPIOA->OTYPER &= ~((1 << 5) | (1 << 7));
 
     /* PA4 -> CS as output */
-    GPIOA->MODER &= ~(3U << (RC522_CS_PIN * 2));
-    GPIOA->MODER |=  (1U << (RC522_CS_PIN * 2));
-    GPIOA->OSPEEDR |= (3U << (RC522_CS_PIN * 2));
-    GPIOA->PUPDR &= ~(3U << (RC522_CS_PIN * 2));
-    GPIOA->OTYPER &= ~(1U << RC522_CS_PIN);
+    GPIOA->MODER &= ~(3 << (RC522_CS_PIN * 2));
+    GPIOA->MODER |=  (1 << (RC522_CS_PIN * 2));
+    GPIOA->OSPEEDR |= (3 << (RC522_CS_PIN * 2));
+    GPIOA->PUPDR &= ~(3 << (RC522_CS_PIN * 2));
+    GPIOA->OTYPER &= ~(1 << RC522_CS_PIN);
     RC522_CS_Unselect();
 
     /* PB0 -> RST as output */
-    GPIOB->MODER &= ~(3U << (RC522_RST_PIN * 2));
-    GPIOB->MODER |=  (1U << (RC522_RST_PIN * 2));
-    GPIOB->OSPEEDR |= (3U << (RC522_RST_PIN * 2));
-    GPIOB->PUPDR &= ~(3U << (RC522_RST_PIN * 2));
-    GPIOB->OTYPER &= ~(1U << RC522_RST_PIN);
-    GPIOB->BSRR = (1U << RC522_RST_PIN); /* RST = 1 */
+    GPIOB->MODER &= ~(3 << (RC522_RST_PIN * 2));
+    GPIOB->MODER |=  (1 << (RC522_RST_PIN * 2));
+    GPIOB->OSPEEDR |= (3 << (RC522_RST_PIN * 2));
+    GPIOB->PUPDR &= ~(3 << (RC522_RST_PIN * 2));
+    GPIOB->OTYPER &= ~(1 << RC522_RST_PIN);
+    GPIOB->BSRR = (1 << RC522_RST_PIN); /* RST = 1 */
 }
+
 
 /* Initialize SPI1 as master (basic) */
 void RC522_SPI_Init(void) {
